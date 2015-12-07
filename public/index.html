@@ -3,8 +3,146 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <style>
+    .background {
+    fill: none;
+    pointer-events: all;
+    }
+
+    #states {
+    fill: #aaa;
+    }
+
+    #states .active {
+    fill: rgb(254,201,56);
+    }
+
+    #state-borders {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    pointer-events: none;
+    }
+    </style>
   </head>
   <body>
+    <h1>Refugee Data Visualizer</h1>
+    <div>
+      Countries
+    </div>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="//d3js.org/topojson.v1.min.js"></script>
+    <script>
 
+    // Plan to modify extensively and understand what is going on, will comment further
+    // Copied From http://bl.ocks.org/mbostock/2206590, Mike Bostocks - This Iteration
+    var width = 960,
+        height = 500,
+        centered;
+
+    var projection = d3.geo.albersUsa()
+        .scale(1000)
+        .translate([width / 2, height / 2]);
+
+    var path = d3.geo.path()
+        .projection(projection);
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    svg.append("rect")
+        .attr("class", "background")
+        .attr("width", width)
+        .attr("height", height)
+        .on("click", clicked);
+
+    var g = svg.append("g");
+
+    d3.json("us-10m.json", function(error, us) {
+      if (error) throw error;
+
+      g.append("g")
+          .attr("id", "states")
+        .selectAll("path")
+          .data(topojson.feature(us, us.objects.states).features)
+        .enter().append("path")
+          .attr("d", path)
+          .on("click", clicked);
+
+      g.append("path")
+          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+          .attr("id", "state-borders")
+          .attr("d", path);
+    });
+
+    function clicked(d) {
+      var x, y, k;
+
+      if (d && centered !== d) {
+        var centroid = path.centroid(d);
+        x = centroid[0];
+        y = centroid[1];
+        k = 4;
+        centered = d;
+      } else {
+        x = width / 2;
+        y = height / 2;
+        k = 1;
+        centered = null;
+      }
+
+      g.selectAll("path")
+          .classed("active", centered && function(d) { return d === centered; });
+
+      g.transition()
+          .duration(750)
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+          .style("stroke-width", 1.5 / k + "px");
+    }
+
+
+    // Me playing around with attaching data to the screen
+    var width = 100,
+        height = 100;
+
+    var statesArray = [];
+    var perStatePerCountry = [];
+    var countriesArray = [];
+
+    var SYRIA = 65;
+
+    var a = d3.select("body").append("div");
+
+    d3.json("2014_refugees.json", function(error, data) {
+      if (error) return console.error(error);
+      a.selectAll("a")
+       .data(data.Columns)
+       .enter()
+        .append("a")
+        .attr("href", function (d) {
+         return "https://en.wikipedia.org/wiki/" + d.toLowerCase();
+        })
+        .text(function (d) {
+          countriesArray.push(d);
+         return d + " :)";
+       })
+        .data(data.Rows)
+          .append("p")
+          .text(function (d) {
+            console.log(d3.keys(d));
+            console.log(d3.values(d)[0][SYRIA]);
+            statesArray.push(d3.keys(d)[0]);
+            perStatePerCountry.push(d3.values(d)[0][SYRIA]);
+            return d3.keys(d) + d3.values(d);
+            })
+
+
+
+    });
+;
+    </script>
   </body>
 </html>
