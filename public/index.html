@@ -25,12 +25,21 @@
     stroke-linecap: round;
     pointer-events: none;
     }
+
+    #title {
+      background-color: black;
+      color: rgb(254,201,56);
+    }
+
     </style>
   </head>
   <body>
-    <h1>Refugee Data Visualizer</h1>
+    <h1 id="title">Refugee Data Visualizer</h1>
     <div>
-      Countries
+      <h2 id="countries-header">Countries</h2>
+    </div>
+    <div>
+      <h2 id="states-header">States</h2>
     </div>
     <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
@@ -142,6 +151,25 @@
 
 
     });
+
+    d3.json("2014_refugees.json", function (error, data) {
+        if (error) return console.error(error);
+        d3.select("#countries-header")
+        .data(data.Rows)
+          .append("p")
+          .text(function (d) {
+            return countriesArray.toString();
+          })
+          .style("font-size", "12px");
+
+        d3.select("#states-header")
+        .data(data.Rows)
+          .append("p")
+          .text(function (d) {
+            return statesArray.toString();
+          })
+          .style("font-size", "12px");
+    })
 ;
     </script>
   </body>
