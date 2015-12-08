@@ -19,7 +19,7 @@
     }
 
     #states {
-    fill: #aaa;
+    fill: #333444;
     }
 
     #states .active {
@@ -91,6 +91,10 @@
           .data(topojson.feature(us, us.objects.states).features)
         .enter().append("path")
           .attr("d", path)
+          .attr("fill", function (d,i) {
+            console.log(i);
+            return "rgb(200,200," + i*10 + ")";
+          })
           .on("click", clicked);
 
       g.append("path")
@@ -136,6 +140,7 @@
 
     var a = d3.select("body").append("div");
 
+    // getting data from json file, pushing data to arrays
     d3.json("2014_refugees.json", function(error, data) {
       if (error) return console.error(error);
       a.selectAll("a")
@@ -159,7 +164,7 @@
             // return d3.keys(d) + d3.values(d);
           });
 
-
+        //creating bar chart for syrian resettlement in 2014 by state with some styling
         var x = d3.scale.linear()
             .domain([0, d3.max(perStateFromSYRIA.slice(0,49))])
             .range([0, 820]);
@@ -176,10 +181,11 @@
 
     });
 
+    // printing the columnar data (mostly countries)
     d3.json("2014_refugees.json", function (error, data) {
         if (error) return console.error(error);
         d3.select("#countries-header")
-        .data(data.Rows)
+        .data(data.Columns)
           .append("p")
           .text(function (d) {
             return countriesArray.toString().split(",").join(", ");
@@ -195,8 +201,8 @@
           .style("font-size", "12px");
     });
 
-    console.log(perStateFromSYRIA);
-
+    // NEED ARRAY TO MAP ORDERED ARRAY OF STATES TO PATHS
+    var mappingArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA"];
 
 
     </script>
