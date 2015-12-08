@@ -4,6 +4,15 @@
     <meta charset="utf-8">
     <title></title>
     <style>
+
+    .chart div {
+    font: 10px sans-serif;
+    padding-right: 1px;
+    margin: 1px;
+    color: white;
+    text-align: right;
+    }
+
     .background {
     fill: none;
     pointer-events: all;
@@ -40,6 +49,9 @@
     </div>
     <div>
       <h2 id="states-header">States</h2>
+    </div>
+    <div class="chart">
+      <h2>Syrians Resettled in 2014 (by State)</h2>
     </div>
     <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
@@ -114,11 +126,10 @@
 
 
     // Me playing around with attaching data to the screen
-    var width = 100,
-        height = 100;
 
     var statesArray = [];
-    var perStatePerCountry = [];
+    // numbers of individuals per state from SYRIA for 2014_refugees
+    var perStateFromSYRIA =[];
     var countriesArray = [];
 
     var SYRIA = 65;
@@ -136,7 +147,7 @@
         })
         .text(function (d) {
           countriesArray.push(d);
-         return d + " :)";
+        //  return d + " :)";
        })
         .data(data.Rows)
           .append("p")
@@ -144,11 +155,24 @@
             console.log(d3.keys(d));
             console.log(d3.values(d)[0][SYRIA]);
             statesArray.push(d3.keys(d)[0]);
-            perStatePerCountry.push(d3.values(d)[0][SYRIA]);
-            return d3.keys(d) + d3.values(d);
-            })
+            perStateFromSYRIA.push(d3.values(d)[0][SYRIA]);
+            // return d3.keys(d) + d3.values(d);
+          });
 
 
+        var x = d3.scale.linear()
+            .domain([0, d3.max(perStateFromSYRIA.slice(0,49))])
+            .range([0, 820]);
+
+        d3.select(".chart")
+          .selectAll("div")
+            .data(perStateFromSYRIA.slice(0,49))
+          .enter().append("div")
+            .style("width", function(d) { return x(d+5) + "px"; })
+            .style("background-color", function (d) {return "rgba(255,0,"+ d*15 + ",0.7)"})
+            .append("span")
+            .text(function(d,i) { return d + " " + statesArray[i]; })
+            .style("font-size", "9px");
 
     });
 
@@ -158,7 +182,7 @@
         .data(data.Rows)
           .append("p")
           .text(function (d) {
-            return countriesArray.toString();
+            return countriesArray.toString().split(",").join(", ");
           })
           .style("font-size", "12px");
 
@@ -166,11 +190,15 @@
         .data(data.Rows)
           .append("p")
           .text(function (d) {
-            return statesArray.toString();
+            return statesArray.toString().split(",").join(", ");
           })
           .style("font-size", "12px");
-    })
-;
+    });
+
+    console.log(perStateFromSYRIA);
+
+
+
     </script>
   </body>
 </html>
