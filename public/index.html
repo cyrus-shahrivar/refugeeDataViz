@@ -4,13 +4,40 @@
     <meta charset="utf-8">
     <title>Refugee Data Visualizer</title>
     <style>
+      body {
+        font-family: Helvetica, sans-serif;
+      }
+      .left-container {
+        display: inline-block;
+      }
 
+      .middle-container {
+        display: inline-block;
+        position: absolute;
+        height: 560px;
+      }
+      .map-container {
+        position: relative;
+      }
+      .chart-container {
+        position: relative;
+        top: -200px;
+      }
+      .countries-container {
+        -webkit-column-count: 2; /* Chrome, Safari, Opera */
+        -moz-column-count: 2; /* Firefox */
+        column-count: 2;
+        height: 560px;
+        overflow: scroll;
+        width: 200px;
+        display: inline-block;
+      }
       .bar {
-        fill: black;
+        fill: rgba(0,0,0,0.5);
       }
 
       .bar:hover {
-        fill: rgb(254,201,56);
+        fill: rgb(253,200,47);
       }
 
       .axis {
@@ -28,14 +55,6 @@
         display: none;
       }
 
-      .chart div {
-      font: 10px sans-serif;
-      padding-right: 1px;
-      margin: 1px;
-      color: white;
-      text-align: right;
-      }
-
       .background {
       fill: none;
       pointer-events: all;
@@ -46,7 +65,7 @@
       }
 
       #states .active {
-      fill: rgb(254,201,56);
+      fill: rgb(253,200,47);
       }
 
       #state-borders {
@@ -59,41 +78,50 @@
       }
 
       #title {
-        background-color: black;
-        color: rgb(254,201,56);
+        background-color: white;
+        color: rgb(253,200,47);
       }
 
     </style>
   </head>
   <body>
-    <h1 id="title">Refugee Data Visualizer</h1>
-    <div>
-      <!-- <h2 id="countries-header">Countries</h2> -->
+    <header>
+      <h1 id="title">Refugee Data Visualizer</h1>
+    </header>
+    <div class="overall-container">
+      <div class="left-container">
+        <div class="countries-container"></div>
+      </div>
+
+      <div class="middle-container">
+        <div class="map-container"></div>
+        <div class="chart-container"></div>
+      </div>
+
+      <div class="right-container">
+        <div class="news-stats-container">
+        </div>
+      </div>
     </div>
-    <div>
-      <!-- <h2 id="states-header">States</h2> -->
-    </div>
-    <div class="chart">
-      <h2>Syrians Resettled in 2014 (by State)</h2>
-    </div>
+
     <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
     <script>
 
     // Plan to modify extensively and understand what is going on, will comment further
-    // Copied From http://bl.ocks.org/mbostock/2206590, Mike Bostocks - This Iteration
-    var width = 960,
-        height = 500,
+    // Started with map and chart from http://bl.ocks.org/mbostock/
+    var width = 860,
+        height = 450,
         centered;
 
     var projection = d3.geo.albersUsa()
-        .scale(1000)
+        .scale(900)
         .translate([width / 2, height / 2]);
 
     var path = d3.geo.path()
         .projection(projection);
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select(".map-container").append("svg")
         .attr("width", width)
         .attr("height", height);
 
@@ -116,7 +144,8 @@
           .attr("d", path)
           .attr("fill", function (d,i) {
             console.log(i);
-            return "rgb(200,200," + i*10 + ")";
+            return "rgb(253,200," + perStateFromSYRIA[i]*47 + ")";
+            //d3.max(perStateFromSYRIA.slice(0,51))
           })
           .on("click", clicked);
 
@@ -161,139 +190,106 @@
 
     var SYRIA = 65;
 
-    var a = d3.select("body").append("div");
+
 
     // getting data from json file, pushing data to arrays
     d3.json("2014_refugees.json", function(error, data) {
       if (error) return console.error(error);
-      a.selectAll("a")
+      d3.select(".countries-container").selectAll("span")
        .data(data.Columns)
        .enter()
-        .append("a")
-        .attr("href", function (d) {
-         return "https://en.wikipedia.org/wiki/" + d.toLowerCase();
-        })
+        .append("span")
         .text(function (d) {
           countriesArray.push(d);
-        //  return d + " :)";
-       })
+        })
         .data(data.Rows)
-          .append("p")
+          .append("span")
           .text(function (d) {
-            console.log(d3.keys(d));
-            console.log(d3.values(d)[0][SYRIA]);
             statesArray.push(d3.keys(d)[0]);
             perStateFromSYRIA.push(d3.values(d)[0][SYRIA]);
-            // return d3.keys(d) + d3.values(d);
           });
-
-        //creating bar chart for syrian resettlement in 2014 by state with some styling
-        var x = d3.scale.linear()
-            .domain([0, d3.max(perStateFromSYRIA.slice(0,49))])
-            .range([0, 820]);
-
-        d3.select(".chart")
-          .selectAll("div")
-            .data(perStateFromSYRIA.slice(0,49))
-          .enter().append("div")
-            .style("width", function(d) { return x(d+5) + "px"; })
-            .style("background-color", function (d) {return "rgba(255,0,"+ d*15 + ",0.7)"})
-            .append("span")
-            .text(function(d,i) { return d + " " + statesArray[i]; })
-            .style("font-size", "9px");
-
     });
 
     // printing the columnar data (mostly countries)
     d3.json("2014_refugees.json", function (error, data) {
         if (error) return console.error(error);
-        d3.select("#title")
+        d3.select(".countries-container").selectAll("li")
         .data(data.Columns)
           .enter()
           .append("li")
           .text(function (d, i) {
             return countriesArray[i].toString().split(",").join(", ")
           })
-          .style("font-size", "0.7em")
-          .style("color", "lightgrey")
+          .style("font-size", "0.68em")
+          .style("color", "grey")
           .style("list-style", "none");
-
-        d3.select("#title")
-        .data(data.Rows)
-          .enter()
-          .append("li")
-          .text(function (d, i) {
-            return statesArray[i].toString().split(",").join(", ");
-          })
-          .style("font-size", "12px");
-          // .style("list-style", "none");
     });
 
     // NEED ARRAY TO MAP ORDERED ARRAY OF STATES TO PATHS
-    var mappingArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA"];
+    var mappingArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE", "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA"];
 
-//trying a vertical bar chart
-var margin = {top: 20, right: 20, bottom: 150, left: 40},
-    width = 830 - margin.left - margin.right,
-    height = 350 - margin.top - margin.bottom;
+    //trying a vertical bar chart
+    var margin = {top: 20, right: 20, bottom: 150, left: 40},
+        width = 830 - margin.left - margin.right,
+        height = 350 - margin.top - margin.bottom;
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
+    var x = d3.scale.ordinal()
+        .rangeRoundBands([0, width], .1);
 
-var y = d3.scale.linear()
-    .range([height, 0]);
+    var y = d3.scale.linear()
+        .range([height, 0]);
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
 
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .ticks(10);
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(10);
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg = d3.select(".chart-container").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("2014_refugees.json", function(error, data) {
-  if (error) throw error;
+    d3.json("2014_refugees.json", function(error, data) {
+      if (error) throw error;
 
-  x.domain(statesArray.map(function(d) { return d; }));
-  y.domain([0, d3.max(perStateFromSYRIA.slice(0,49))]);
+      x.domain(statesArray.slice(0,50).map(function(d) { return d; }));
+      y.domain([0, d3.max(perStateFromSYRIA.slice(0,50))]);
 
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-        .selectAll("text")
-        .style("text-anchor", "end")
-        /* .style("font-size", "0.8em")*/
-        .attr("dx", "-.7em")
-        .attr("dy", "-0.5em")
-        .attr("transform", "rotate(-90)" );;
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            /* .style("font-size", "0.8em")*/
+            .attr("dx", "-.7em")
+            .attr("dy", "-0.5em")
+            .attr("transform", "rotate(-90)" );;
 
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Number of Individuals Resettled");
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text("No. of People Resettled");
 
-  svg.selectAll(".bar")
-      .data(perStateFromSYRIA.slice(0,49))
-    .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d,i) { return x(statesArray[i]); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d); })
-      .attr("height", function(d) { return height - y(d); });
-});
+      svg.selectAll(".bar")
+          .data(perStateFromSYRIA.slice(0,50))
+        .enter().append("rect")
+          .attr("class", "bar")
+          .attr("x", function(d,i) { return x(statesArray[i]); })
+          .attr("width", x.rangeBand())
+          .attr("y", function(d) { return y(d); })
+          .attr("height", function(d) { return height - y(d); });
+    });
     </script>
   </body>
 </html>
