@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Refugee Data Visualizer</title>
-    <style>
+    <style href="css/style.css">
       body {
         font-family: Helvetica, sans-serif;
       }
@@ -38,6 +38,16 @@
 
       .bar:hover {
         fill: rgb(253,200,47);
+      }
+
+      .state:hover{
+        fill: rgb(0,200,0);
+        text: "hi";
+      }
+
+      .country:hover{
+        text-decoration: underline;
+        cursor: default;
       }
 
       .axis {
@@ -108,9 +118,33 @@
     <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
     <script>
+    // i want hovering over the countries text to cause the map and the bar chart to update with the country number
+    // how do i do this?  i figure i need an event broadcaster and an event listeners. event listeners need to be on the
+    // bar chart and the map.  event broadcaster needs to be on each country item.
+    ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
+    var dispatch = d3.dispatch("load", "statechange");
+    var statesGeoArray = [];
+    var drawnOrderStatesNameArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE",
+                                    "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA", "NEW HAMPSHIRE", "VERMONT",
+                                    "NEW YORK", "WYOMING", "IOWA","NEBRASKA", "MASSACHUSETTS", "ILLINOIS", "PENNSYLVANIA",
+                                    "CONNECTICUT", "RHODE ISLAND", "CALIFORNIA","UTAH", "NEVADA", "OHIO", "INDIANA",
+                                    "NEW JERSEY","COLORADO","WEST VIRGINIA","MISSOURI", "KANSAS", "DELAWARE", "MARYLAND",
+                                    "VIRGINIA","KENTUCKY", "DISTRICT OF COLUMBIA", "ARIZONA", "OKLAHOMA", "NEW MEXICO",
+                                    "TENNESSEE", "NORTH CAROLINA", "TEXAS", "ARKANSAS","SOUTH CAROLINA", "ALABAMA","GEORGIA",
+                                    "MISSISSIPPI","LOUISIANA","FLORIDA","HAWAII","ALASKA"];
+    var drawnOrderStatesNumberArray = [47,26,12,34,23,19,22,49,37,41,29,45,32,50,15,27,21,13,38,6,39,4,44,28,35,14,30,5,48,25,
+                                      16,7,20,46,17,8,2,36,31,42,33,43,3,40,0,10,24,18,9,11,1];
 
-    // Plan to modify extensively and understand what is going on, will comment further
+    // numbers of individuals per state from SYRIA for 2014_refugees
+    var perStateFromSYRIA =[];
+    var countriesArray = [];
+    var statesArray = [];
+    var syria = 0;
+    ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
     // Started with map and chart from http://bl.ocks.org/mbostock/
+    // dispatch.on("load")
     var width = 860,
         height = 450,
         centered;
@@ -130,11 +164,10 @@
         .attr("class", "background")
         .attr("width", width)
         .attr("height", height);
-        // .on("mouseover", mousedover);
+
 
     var g = svg.append("g");
 
-    var statesGeoArray = [];
 
     d3.json("us-10m.json", function(error, us) {
       if (error) throw error;
@@ -150,13 +183,10 @@
             statesGeoArray.push(us.objects.states.geometries[i].id)
             //the drawn order array returns the index of the state
             //i want to scale the color based on number of individuals.  more indivduals should be higher in color, less should be lower in color
-            var scaled = d3.scale.linear().domain([0,d3.max(perStateFromSYRIA.slice(0,51))]).range([5,98]);
+            var scaled = d3.scale.linear().domain([0,d3.max(perStateFromSYRIA.slice(0,51))]).range([0,98]);
             return "hsl(45,"+scaled(perStateFromSYRIA.slice(0,51)[drawnOrderStatesNumberArray[i]]) + "%,59%)";
-          });
-          // .on('mouseover', function(d, i) {
-          //       var currentState = this;
-          //       d3.select(this)
-          //       .style('fill-opacity', 0.4)};
+          })
+          .on("mouseover", mousedover);
 
       g.append("path")
           .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -164,29 +194,13 @@
           .attr("d", path);
     });
 
-    // function mousedover(d) {
-    //
-    //   g.selectAll("path")
-    //       .classed("active", centered && function(d) { return d === centered; });
-    //
-    //   g.transition()
-    //       .duration(750)
-    //       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-    //       .style("stroke-width", 1.5 / k + "px");
-    // }
+    function mousedover() {
+      d3.select(this).attr("class", "state");
+    }
+    ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
 
 
-    // Me playing around with attaching data to the screen
-
-    var statesArray = [];
-    // numbers of individuals per state from SYRIA for 2014_refugees
-    var perStateFromSYRIA =[];
-    var countriesArray = [];
-
-    var SYRIA = 65;
-
-
-
+    ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
     // getting data from json file, pushing data to arrays
     d3.json("2014_refugees.json", function(error, data) {
       if (error) return console.error(error);
@@ -201,32 +215,28 @@
           .append("span")
           .text(function (d) {
             statesArray.push(d3.keys(d)[0]);
-            perStateFromSYRIA.push(d3.values(d)[0][SYRIA]);
+            perStateFromSYRIA.push(d3.values(d)[0][syria]);
           });
-    });
 
-    // printing the columnar data (mostly countries)
-    d3.json("2014_refugees.json", function (error, data) {
-        if (error) return console.error(error);
-        d3.select(".countries-container").selectAll("li")
-        .data(data.Columns)
-          .enter()
-          .append("li")
-          .text(function (d, i) {
-            return countriesArray[i].toString().split(",").join(", ")
-          })
-          .style("font-size", "0.68em")
-          .style("color", "grey")
-          .style("list-style", "none");
+      d3.select(".countries-container").selectAll("li")
+      .data(data.Columns)
+        .enter()
+        .append("li")
+        .text(function (d, i) {
+          return countriesArray[i].toString().split(",").join(", ")
+        })
+        .style("font-size", "0.68em")
+        .style("color", "grey")
+        .style("list-style", "none")
+        .on("mouseover", function () {
+          d3.select(this).attr("class","country");
+          syria = 2;
+          console.log("you moused me bro");
+        });
     });
+    ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
 
-    // NEED ARRAY TO MAP ORDERED ARRAY OF STATES TO PATHS
-    var drawnOrderStatesNameArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE", "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA", "NEW HAMPSHIRE", "VERMONT", "NEW YORK", "WYOMING", "IOWA",
-    "NEBRASKA", "MASSACHUSETTS", "ILLINOIS", "PENNSYLVANIA", "CONNECTICUT", "RHODE ISLAND", "CALIFORNIA",
-    "UTAH", "NEVADA", "OHIO", "INDIANA", "NEW JERSEY","COLORADO","WEST VIRGINIA",
-    "MISSOURI", "KANSAS", "DELAWARE", "MARYLAND","VIRGINIA","KENTUCKY", "DISTRICT OF COLUMBIA", "ARIZONA", "OKLAHOMA", "NEW MEXICO", "TENNESSEE", "NORTH CAROLINA", "TEXAS", "ARKANSAS","SOUTH CAROLINA", "ALABAMA","GEORGIA","MISSISSIPPI","LOUISIANA","FLORIDA","HAWAII","ALASKA"];
-    var drawnOrderStatesNumberArray = [47,26,12,34,23,19,22,49,37,41,29,45,32,50,15,27,21,13,38,6,39,4,44,28,35,14,30,5,48,25,16,7,20,46,17,8,2,36,31,42,33,43,3,40,0,10,24,18,9,11,1];
-    //trying a vertical bar chart
+    ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
     var margin = {top: 20, right: 20, bottom: 80, left: 40},
         width = 830 - margin.left - margin.right,
         height = 180 - margin.top - margin.bottom;
@@ -290,6 +300,7 @@
           .attr("y", function(d) { return y(d); })
           .attr("height", function(d) { return height - y(d); });
     });
+    ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
     </script>
   </body>
 </html>
