@@ -213,19 +213,20 @@ drawmap();
       //////////
       var populateCountriesAndStates = function () {
       console.log("you entered populateCountriesAndStates");
-      perStateFromcountry = [];
+
       //for some reason this is not called again even though this function is triggered
       var hi = d3.select(".countries-container").selectAll("span").data(data.Columns);
 
       hi.remove("span");
 
       hi.exit();
-
+      //debugger;
       hi.enter()
         .append("span")
         .text(function (d) {
           countriesArray.push(d);
           console.log("you entered the actual array populater");
+          perStateFromcountry = [];
         })
         .data(data.Rows)
           .append("span")
@@ -236,7 +237,7 @@ drawmap();
             //console.log(perStateFromcountry);
             statesArray.push(d3.keys(d)[0]);
             perStateFromcountry.push(d3.values(d)[0][country]);
-            //console.log(perStateFromcountry);
+            console.log(perStateFromcountry);
           });
         //console.log(perStateFromcountry);
       }
@@ -256,7 +257,6 @@ drawmap();
         .style("list-style", "none")
         .on("click", function () {
           d3.select(this).attr("class","country");
-
           //perStateFromcountry = [];
           country = 2;
           populateCountriesAndStates();
