@@ -41,7 +41,7 @@
       }
 
       .state:hover{
-        fill: rgb(0,200,0);
+        fill: rgba(253,200,47, 0.5);
         text: "hi";
       }
 
@@ -115,14 +115,14 @@
       </div>
     </div>
 
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="//d3js.org/topojson.v1.min.js"></script>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
+    <script src="topojson.v1.min.js"></script>
     <script>
     // i want hovering over the countries text to cause the map and the bar chart to update with the country number
     // how do i do this?  i figure i need an event broadcaster and an event listeners. event listeners need to be on the
     // bar chart and the map.  event broadcaster needs to be on each country item.
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
-    var dispatch = d3.dispatch("load", "statechange");
+    // var dispatch = d3.dispatch("load", "statechange");
     var statesGeoArray = [];
     var drawnOrderStatesNameArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE",
                                     "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA", "NEW HAMPSHIRE", "VERMONT",
@@ -135,11 +135,11 @@
     var drawnOrderStatesNumberArray = [47,26,12,34,23,19,22,49,37,41,29,45,32,50,15,27,21,13,38,6,39,4,44,28,35,14,30,5,48,25,
                                       16,7,20,46,17,8,2,36,31,42,33,43,3,40,0,10,24,18,9,11,1];
 
-    // numbers of individuals per state from SYRIA for 2014_refugees
-    var perStateFromSYRIA =[];
+    // numbers of individuals per state from country for 2014_refugees
+    var perStateFromcountry =[];
     var countriesArray = [];
     var statesArray = [];
-    var syria = 0;
+    var country = 0;
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
 
     ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
@@ -167,56 +167,82 @@
 
 
     var g = svg.append("g");
+    var scaled = 0;
+
+var drawmap = function () {
+  d3.json("us-10m.json", function(error, us) {
+    if (error) throw error;
+    // console.log(us.objects.states.geometries[i].id);
+    g.append("g")
+        .attr("id", "states")
+      .selectAll("path")
+        .data(topojson.feature(us, us.objects.states).features)
+      .enter().append("path")
+        .attr("d", path)
+        .attr("fill", function (d,i) {
+          statesGeoArray.push(us.objects.states.geometries[i].id)
+          //the drawn order array returns the index of the state
+          //i want to scale the color based on number of individuals.  more indivduals should be higher in color, less should be lower in color
+          scaled = d3.scale.linear().domain([0,d3.max(perStateFromcountry.slice(0,51))]).range([0,98]);
+          return "hsl(45,"+scaled(perStateFromcountry.slice(0,51)[drawnOrderStatesNumberArray[i]]) + "%,59%)";
+        })
+        .on("mouseover", mousedover);
+
+    g.append("path")
+        .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+        .attr("id", "state-borders")
+        .attr("d", path);
+  });
+
+}
+
+drawmap();
 
 
-    d3.json("us-10m.json", function(error, us) {
-      if (error) throw error;
-      console.log(us);
-      // console.log(us.objects.states.geometries[i].id);
-      g.append("g")
-          .attr("id", "states")
-        .selectAll("path")
-          .data(topojson.feature(us, us.objects.states).features)
-        .enter().append("path")
-          .attr("d", path)
-          .attr("fill", function (d,i) {
-            statesGeoArray.push(us.objects.states.geometries[i].id)
-            //the drawn order array returns the index of the state
-            //i want to scale the color based on number of individuals.  more indivduals should be higher in color, less should be lower in color
-            var scaled = d3.scale.linear().domain([0,d3.max(perStateFromSYRIA.slice(0,51))]).range([0,98]);
-            return "hsl(45,"+scaled(perStateFromSYRIA.slice(0,51)[drawnOrderStatesNumberArray[i]]) + "%,59%)";
-          })
-          .on("mouseover", mousedover);
-
-      g.append("path")
-          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-          .attr("id", "state-borders")
-          .attr("d", path);
-    });
-
-    function mousedover() {
-      d3.select(this).attr("class", "state");
-    }
     ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
 
 
     ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
+
     // getting data from json file, pushing data to arrays
     d3.json("2014_refugees.json", function(error, data) {
-      if (error) return console.error(error);
-      d3.select(".countries-container").selectAll("span")
-       .data(data.Columns)
-       .enter()
+      if (error) {
+        // perStateFromcountry =[];
+        return console.error(error);
+      }
+      //////////
+      var populateCountriesAndStates = function () {
+      console.log("you entered populateCountriesAndStates");
+      perStateFromcountry = [];
+      //for some reason this is not called again even though this function is triggered
+      var hi = d3.select(".countries-container").selectAll("span").data(data.Columns);
+
+      hi.remove("span");
+
+      hi.exit();
+
+      hi.enter()
         .append("span")
         .text(function (d) {
           countriesArray.push(d);
+          console.log("you entered the actual array populater");
         })
         .data(data.Rows)
           .append("span")
           .text(function (d) {
+            //console.log(d);
+            //perStateFromcountry.shift();
+            //console.log(d3.values(d)[0][country]);
+            //console.log(perStateFromcountry);
             statesArray.push(d3.keys(d)[0]);
-            perStateFromSYRIA.push(d3.values(d)[0][syria]);
+            perStateFromcountry.push(d3.values(d)[0][country]);
+            //console.log(perStateFromcountry);
           });
+        //console.log(perStateFromcountry);
+      }
+      console.log(perStateFromcountry);
+      ////////////
+      populateCountriesAndStates();
 
       d3.select(".countries-container").selectAll("li")
       .data(data.Columns)
@@ -228,12 +254,24 @@
         .style("font-size", "0.68em")
         .style("color", "grey")
         .style("list-style", "none")
-        .on("mouseover", function () {
+        .on("click", function () {
           d3.select(this).attr("class","country");
-          syria = 2;
+
+          //perStateFromcountry = [];
+          country = 2;
+          populateCountriesAndStates();
+          drawmap();
           console.log("you moused me bro");
         });
     });
+
+
+    var mousedover = function () {
+      d3.select(this).attr("class", "state");
+      country = 2;
+      // refillArray();
+
+    }
     ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
 
     ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
@@ -267,7 +305,7 @@
       if (error) throw error;
 
       x.domain(statesArray.slice(0,51).map(function(d) { return d; }));
-      y.domain([0, d3.max(perStateFromSYRIA.slice(0,51))]);
+      y.domain([0, d3.max(perStateFromcountry.slice(0,51))]);
 
       svg.append("g")
           .attr("class", "x axis")
@@ -292,7 +330,7 @@
           .text("People Resettled");
 
       svg.selectAll(".bar")
-          .data(perStateFromSYRIA.slice(0,51))
+          .data(perStateFromcountry.slice(0,51))
         .enter().append("rect")
           .attr("class", "bar")
           .attr("x", function(d,i) { return x(statesArray[i]); })

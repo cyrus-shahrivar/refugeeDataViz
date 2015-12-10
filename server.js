@@ -11,6 +11,8 @@ mongoose.connect('mongodb://localhost/refugeeApp', function (err) {
   } else {
     console.log('connection successful - server');
   }
+
+
 });
 
 
@@ -27,8 +29,6 @@ app.get("/data", function (req,res) {
 //getting same error with
 app.get("/2014data", function (req, res) {
   refugees2014.find().exec(function (err, stuff) {
-    console.log(req);
-    console.log(res);
     console.log(stuff);
     res.send(stuff);
   });
