@@ -21,7 +21,7 @@
       }
       .chart-container {
         position: relative;
-        top: -200px;
+        top: -39px;
       }
       .countries-container {
         -webkit-column-count: 2; /* Chrome, Safari, Opera */
@@ -78,6 +78,7 @@
       }
 
       #title {
+        margin-bottom: 10px;
         background-color: white;
         color: rgb(253,200,47);
       }
@@ -128,14 +129,17 @@
     svg.append("rect")
         .attr("class", "background")
         .attr("width", width)
-        .attr("height", height)
-        .on("click", clicked);
+        .attr("height", height);
+        // .on("mouseover", mousedover);
 
     var g = svg.append("g");
 
+    var statesGeoArray = [];
+
     d3.json("us-10m.json", function(error, us) {
       if (error) throw error;
-
+      console.log(us);
+      // console.log(us.objects.states.geometries[i].id);
       g.append("g")
           .attr("id", "states")
         .selectAll("path")
@@ -143,11 +147,16 @@
         .enter().append("path")
           .attr("d", path)
           .attr("fill", function (d,i) {
-            console.log(i);
-            return "rgb(253,200," + perStateFromSYRIA[i]*47 + ")";
-            //d3.max(perStateFromSYRIA.slice(0,51))
-          })
-          .on("click", clicked);
+            statesGeoArray.push(us.objects.states.geometries[i].id)
+            //the drawn order array returns the index of the state
+            //i want to scale the color based on number of individuals.  more indivduals should be higher in color, less should be lower in color
+            var scaled = d3.scale.linear().domain([0,d3.max(perStateFromSYRIA.slice(0,51))]).range([5,98]);
+            return "hsl(45,"+scaled(perStateFromSYRIA.slice(0,51)[drawnOrderStatesNumberArray[i]]) + "%,59%)";
+          });
+          // .on('mouseover', function(d, i) {
+          //       var currentState = this;
+          //       d3.select(this)
+          //       .style('fill-opacity', 0.4)};
 
       g.append("path")
           .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -155,30 +164,16 @@
           .attr("d", path);
     });
 
-    function clicked(d) {
-      var x, y, k;
-
-      if (d && centered !== d) {
-        var centroid = path.centroid(d);
-        x = centroid[0];
-        y = centroid[1];
-        k = 4;
-        centered = d;
-      } else {
-        x = width / 2;
-        y = height / 2;
-        k = 1;
-        centered = null;
-      }
-
-      g.selectAll("path")
-          .classed("active", centered && function(d) { return d === centered; });
-
-      g.transition()
-          .duration(750)
-          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-          .style("stroke-width", 1.5 / k + "px");
-    }
+    // function mousedover(d) {
+    //
+    //   g.selectAll("path")
+    //       .classed("active", centered && function(d) { return d === centered; });
+    //
+    //   g.transition()
+    //       .duration(750)
+    //       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+    //       .style("stroke-width", 1.5 / k + "px");
+    // }
 
 
     // Me playing around with attaching data to the screen
@@ -226,12 +221,15 @@
     });
 
     // NEED ARRAY TO MAP ORDERED ARRAY OF STATES TO PATHS
-    var mappingArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE", "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA"];
-
+    var drawnOrderStatesNameArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE", "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA", "NEW HAMPSHIRE", "VERMONT", "NEW YORK", "WYOMING", "IOWA",
+    "NEBRASKA", "MASSACHUSETTS", "ILLINOIS", "PENNSYLVANIA", "CONNECTICUT", "RHODE ISLAND", "CALIFORNIA",
+    "UTAH", "NEVADA", "OHIO", "INDIANA", "NEW JERSEY","COLORADO","WEST VIRGINIA",
+    "MISSOURI", "KANSAS", "DELAWARE", "MARYLAND","VIRGINIA","KENTUCKY", "DISTRICT OF COLUMBIA", "ARIZONA", "OKLAHOMA", "NEW MEXICO", "TENNESSEE", "NORTH CAROLINA", "TEXAS", "ARKANSAS","SOUTH CAROLINA", "ALABAMA","GEORGIA","MISSISSIPPI","LOUISIANA","FLORIDA","HAWAII","ALASKA"];
+    var drawnOrderStatesNumberArray = [47,26,12,34,23,19,22,49,37,41,29,45,32,50,15,27,21,13,38,6,39,4,44,28,35,14,30,5,48,25,16,7,20,46,17,8,2,36,31,42,33,43,3,40,0,10,24,18,9,11,1];
     //trying a vertical bar chart
-    var margin = {top: 20, right: 20, bottom: 150, left: 40},
+    var margin = {top: 20, right: 20, bottom: 80, left: 40},
         width = 830 - margin.left - margin.right,
-        height = 350 - margin.top - margin.bottom;
+        height = 180 - margin.top - margin.bottom;
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);
@@ -248,17 +246,18 @@
         .orient("left")
         .ticks(10);
 
-    var svg = d3.select(".chart-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg = d3.select(".chart-container")
+        .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     d3.json("2014_refugees.json", function(error, data) {
       if (error) throw error;
 
-      x.domain(statesArray.slice(0,50).map(function(d) { return d; }));
-      y.domain([0, d3.max(perStateFromSYRIA.slice(0,50))]);
+      x.domain(statesArray.slice(0,51).map(function(d) { return d; }));
+      y.domain([0, d3.max(perStateFromSYRIA.slice(0,51))]);
 
       svg.append("g")
           .attr("class", "x axis")
@@ -266,10 +265,10 @@
           .call(xAxis)
             .selectAll("text")
             .style("text-anchor", "end")
-            /* .style("font-size", "0.8em")*/
+            .style("font-size", "0.85em")
             .attr("dx", "-.7em")
-            .attr("dy", "-0.5em")
-            .attr("transform", "rotate(-90)" );;
+            .attr("dy", "0em")
+            .attr("transform", "rotate(-45)" );;
 
       svg.append("g")
           .attr("class", "y axis")
@@ -279,10 +278,11 @@
           .attr("y", 6)
           .attr("dy", ".71em")
           .style("text-anchor", "end")
-          .text("No. of People Resettled");
+          .style("font-size", "1.0em")
+          .text("People Resettled");
 
       svg.selectAll(".bar")
-          .data(perStateFromSYRIA.slice(0,50))
+          .data(perStateFromSYRIA.slice(0,51))
         .enter().append("rect")
           .attr("class", "bar")
           .attr("x", function(d,i) { return x(statesArray[i]); })
