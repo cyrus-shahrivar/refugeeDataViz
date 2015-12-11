@@ -139,7 +139,7 @@
     var perStateFromcountry =[];
     var countriesArray = [];
     var statesArray = [];
-    var country = 2;
+    var country = 0;
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
 
     ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
@@ -206,51 +206,26 @@ drawmap();
 
     // getting data from json file, pushing data to arrays
     d3.json("2014_refugees.json", function(error, data) {
-      if (error) {
-        // perStateFromcountry =[];
-        return console.error(error);
-      }
-      //////////
-      var populateCountriesAndStates = function () {
-      console.log("you entered populateCountriesAndStates");
-      perStateFromcountry = [];
+        if (error) {
+          // perStateFromcountry =[];
+          return console.error(error);
+        }
+        //////////
+        var populateCountriesAndStates = function () {
+        console.log("you entered populateCountriesAndStates");
+        perStateFromcountry = [];
 
-      //for some reason this is not called again even though this function is triggered
-      //var hi = d3.select(".countries-container").selectAll("span").data(data.Columns);
+        //for some reason this is not called again even though this function is triggered
+        //var hi = d3.select(".countries-container").selectAll("span").data(data.Columns);
 
-      data.Columns.forEach(function (d) {
-        countriesArray.push(d);
-      });
+        data.Columns.forEach(function (d) {
+          countriesArray.push(d);
+        });
 
-      data.Rows.forEach(function (d) {
-        statesArray.push(d3.keys(d)[0]);
-        perStateFromcountry.push(d3.values(d)[0][country])
-      });
-
-
-      //
-      // hi.remove("span");
-      //
-      // hi.exit();
-      // //debugger;
-      // hi.enter()
-      //   .append("span")
-      //   .text(function (d) {
-      //     countriesArray.push(d);
-      //     console.log("you entered the actual array populater");
-      //   })
-      //   .data(data.Rows)
-      //     .append("span")
-      //     .text(function (d) {
-      //       //console.log(d);
-      //       //perStateFromcountry.shift();
-      //       //console.log(d3.values(d)[0][country]);
-      //       //console.log(perStateFromcountry);
-      //       statesArray.push(d3.keys(d)[0]);
-      //       perStateFromcountry.push(d3.values(d)[0][country]);
-      //       console.log(perStateFromcountry);
-      //     });
-        //console.log(perStateFromcountry);
+        data.Rows.forEach(function (d) {
+          statesArray.push(d3.keys(d)[0]);
+          perStateFromcountry.push(d3.values(d)[0][country])
+        });
       }
       console.log(perStateFromcountry);
       ////////////
@@ -269,7 +244,7 @@ drawmap();
         .on("click", function () {
           d3.select(this).attr("class","country");
           //perStateFromcountry = [];
-          country = 2;
+          country = 65;
           populateCountriesAndStates();
           drawmap();
           console.log("you moused me bro");
@@ -279,7 +254,7 @@ drawmap();
 
     var mousedover = function () {
       d3.select(this).attr("class", "state");
-      country = 2;
+      //country = 2;
       // refillArray();
 
     }
