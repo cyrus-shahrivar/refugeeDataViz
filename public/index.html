@@ -212,8 +212,7 @@ drawmap();
         }
         //////////
         var populateCountriesAndStates = function () {
-        console.log("you entered populateCountriesAndStates");
-        perStateFromcountry = [];
+
 
         //for some reason this is not called again even though this function is triggered
         //var hi = d3.select(".countries-container").selectAll("span").data(data.Columns);
@@ -227,7 +226,6 @@ drawmap();
           perStateFromcountry.push(d3.values(d)[0][country])
         });
       }
-      console.log(perStateFromcountry);
       ////////////
       populateCountriesAndStates();
 
@@ -241,13 +239,14 @@ drawmap();
         .style("font-size", "0.68em")
         .style("color", "grey")
         .style("list-style", "none")
-        .on("click", function () {
-          d3.select(this).attr("class","country");
-          //perStateFromcountry = [];
-          country = 65;
+        .on("click", function (d,i) {
+          perStateFromcountry = [];
+          d3.select(this).attr("class","country")
+          country = i;
           populateCountriesAndStates();
           drawmap();
-          console.log("you moused me bro");
+          d3.select(".chart-container>svg").remove();
+          chartDraw();
         });
     });
 
@@ -261,69 +260,72 @@ drawmap();
     ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
 
     ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
-    var margin = {top: 20, right: 20, bottom: 80, left: 40},
-        width = 830 - margin.left - margin.right,
-        height = 180 - margin.top - margin.bottom;
+    var chartDraw = function () {
+      var margin = {top: 20, right: 20, bottom: 80, left: 40},
+          width = 830 - margin.left - margin.right,
+          height = 180 - margin.top - margin.bottom;
 
-    var x = d3.scale.ordinal()
-        .rangeRoundBands([0, width], .1);
+      var x = d3.scale.ordinal()
+          .rangeRoundBands([0, width], .1);
+      var xAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom");
 
-    var y = d3.scale.linear()
-        .range([height, 0]);
+      var y = d3.scale.linear()
+          .range([height, 0]);
 
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom");
 
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-        .ticks(10);
+      var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left")
+          .ticks(10);
 
-    var svg = d3.select(".chart-container")
-        .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      var svg = d3.select(".chart-container")
+          .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json("2014_refugees.json", function(error, data) {
-      if (error) throw error;
+      d3.json("2014_refugees.json", function(error, data) {
+        if (error) throw error;
 
-      x.domain(statesArray.slice(0,51).map(function(d) { return d; }));
-      y.domain([0, d3.max(perStateFromcountry.slice(0,51))]);
+        x.domain(statesArray.slice(0,51).map(function(d) { return d; }));
+        y.domain([0, d3.max(perStateFromcountry.slice(0,51))]);
 
-      svg.append("g")
-          .attr("class", "x axis")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis)
-            .selectAll("text")
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+              .selectAll("text")
+              .style("text-anchor", "end")
+              .style("font-size", "0.85em")
+              .attr("dx", "-.7em")
+              .attr("dy", "0em")
+              .attr("transform", "rotate(-45)" );;
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+          .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
             .style("text-anchor", "end")
-            .style("font-size", "0.85em")
-            .attr("dx", "-.7em")
-            .attr("dy", "0em")
-            .attr("transform", "rotate(-45)" );;
+            .style("font-size", "1.0em")
+            .text("People Resettled");
 
-      svg.append("g")
-          .attr("class", "y axis")
-          .call(yAxis)
-        .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", ".71em")
-          .style("text-anchor", "end")
-          .style("font-size", "1.0em")
-          .text("People Resettled");
-
-      svg.selectAll(".bar")
-          .data(perStateFromcountry.slice(0,51))
-        .enter().append("rect")
-          .attr("class", "bar")
-          .attr("x", function(d,i) { return x(statesArray[i]); })
-          .attr("width", x.rangeBand())
-          .attr("y", function(d) { return y(d); })
-          .attr("height", function(d) { return height - y(d); });
-    });
+        svg.selectAll(".bar")
+            .data(perStateFromcountry.slice(0,51))
+          .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d,i) { return x(statesArray[i]); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d); })
+            .attr("height", function(d) { return height - y(d); });
+      });
+    }
+    chartDraw();
     ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
     </script>
   </body>
