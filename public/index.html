@@ -32,7 +32,7 @@
         width: 200px;
         display: inline-block;
       }
-      
+
       /*@media(min-width: 1180px){
         .right-container {
           display: inline;
@@ -168,7 +168,7 @@
     var countriesArray = [];
     var statesArray = [];
     var country = 0;
-    var arrayOfFiles = ["all","2016_refugees","2015_refugees","2014_refugees","2013_refugees", "2012_refugees"];
+    var arrayOfFiles = ["2015_refugees","2014_refugees","2013_refugees", "2012_refugees"];
     var dataset = "2014_refugees";
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
 
@@ -369,7 +369,7 @@ populators();
     ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
     ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
     d3.select("#years-list").selectAll("li")
-      .data(["All",2016,2015,2014,2013,2012])
+      .data([2015,2014,2013,2012])
       .enter()
         .append("li")
         .text(function (d,i) {
@@ -397,7 +397,7 @@ populators();
           chartDraw();
         })
 
-      d3.select("#years-list > li:nth-child(4)")
+      d3.select("#years-list > li:nth-child(2)")
         .style("font-size", "4em");
     ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
 
