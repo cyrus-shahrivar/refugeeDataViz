@@ -32,6 +32,12 @@
         width: 200px;
         display: inline-block;
       }
+
+      .right-container {
+        width: 200px;
+        display: inline;
+        float: right;
+      }
       .bar {
         fill: rgba(0,0,0,0.5);
       }
@@ -111,6 +117,9 @@
 
       <div class="right-container">
         <div class="news-stats-container">
+          <h3>Years</h2>
+          <ul id="years-list">
+          </ul>
         </div>
       </div>
     </div>
@@ -118,11 +127,29 @@
     <script src="d3.v3.min.js" charset="utf-8"></script>
     <script src="topojson.v1.min.js"></script>
     <script>
+    ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
+    d3.select("#years-list").selectAll("li")
+      .data(["All",2016,2015,2014,2013,2012])
+      .enter()
+        .append("li")
+        .text(function (d,i) {
+          return d;
+        })
+        .on("click", function (d,i) {
+          console.log(d,i);
+          console.log(dataset[i]);
+          dataset=dataset[i];
+        })
+    ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
+
     // i want hovering over the countries text to cause the map and the bar chart to update with the country number
     // how do i do this?  i figure i need an event broadcaster and an event listeners. event listeners need to be on the
     // bar chart and the map.  event broadcaster needs to be on each country item.
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
     // var dispatch = d3.dispatch("load", "statechange");
+    var listOfWelcomingStates = ["ARIZONA", "FLORIDA", "GEORGIA", "IDAHO", "ILLINOIS", "IOWA", "MARYLAND", "MASSACHUSETTS",
+                                "MICHIGAN", "NEW MEXICO", "NORTH CAROLINA", "NORTH DAKOTA", "OHIO", "OKLAHOMA", "TENNESSEE",
+                                "TEXAS", "WISCONSIN"];
     var statesGeoArray = [];
     var drawnOrderStatesNameArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE",
                                     "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA", "NEW HAMPSHIRE", "VERMONT",
@@ -140,6 +167,7 @@
     var countriesArray = [];
     var statesArray = [];
     var country = 0;
+    var dataset = ["2014_refugees"];
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
 
     ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
@@ -205,7 +233,7 @@ drawmap();
     ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
 
     // getting data from json file, pushing data to arrays
-    d3.json("2014_refugees.json", function(error, data) {
+    d3.json(dataset+".json", function(error, data) {
         if (error) {
           // perStateFromcountry =[];
           return console.error(error);
@@ -287,7 +315,7 @@ drawmap();
             .append("g")
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      d3.json("2014_refugees.json", function(error, data) {
+      d3.json(dataset+".json", function(error, data) {
         if (error) throw error;
 
         x.domain(statesArray.slice(0,51).map(function(d) { return d; }));
