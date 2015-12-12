@@ -152,7 +152,7 @@
     var perStateFromcountry =[];
     var countriesArray = [];
     var statesArray = [];
-    var country = 1;
+    var country = 0;
     var arrayOfFiles = ["all","2016_refugees","2015_refugees","2014_refugees","2013_refugees", "2012_refugees"];
     var dataset = "2014_refugees";
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
@@ -359,9 +359,10 @@ populators();
           console.log(d,i);
           console.log(dataset);
           console.log(arrayOfFiles[i]);
+          countriesArray=[];
           dataset=arrayOfFiles[i];
           perStateFromcountry = [];
-          country = 1;
+          country = 0;
           populators();
           d3.selectAll(".countries-container li").remove();
           drawmap();
