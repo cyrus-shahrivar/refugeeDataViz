@@ -127,29 +127,15 @@
     <script src="d3.v3.min.js" charset="utf-8"></script>
     <script src="topojson.v1.min.js"></script>
     <script>
-    ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
-    d3.select("#years-list").selectAll("li")
-      .data(["All",2016,2015,2014,2013,2012])
-      .enter()
-        .append("li")
-        .text(function (d,i) {
-          return d;
-        })
-        .on("click", function (d,i) {
-          console.log(d,i);
-          console.log(dataset[i]);
-          dataset=dataset[i];
-        })
-    ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
 
     // i want hovering over the countries text to cause the map and the bar chart to update with the country number
     // how do i do this?  i figure i need an event broadcaster and an event listeners. event listeners need to be on the
     // bar chart and the map.  event broadcaster needs to be on each country item.
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
     // var dispatch = d3.dispatch("load", "statechange");
-    var listOfWelcomingStates = ["ARIZONA", "FLORIDA", "GEORGIA", "IDAHO", "ILLINOIS", "IOWA", "MARYLAND", "MASSACHUSETTS",
-                                "MICHIGAN", "NEW MEXICO", "NORTH CAROLINA", "NORTH DAKOTA", "OHIO", "OKLAHOMA", "TENNESSEE",
-                                "TEXAS", "WISCONSIN"];
+    // var listOfWelcomingStates = ["ARIZONA", "FLORIDA", "GEORGIA", "IDAHO", "ILLINOIS", "IOWA", "MARYLAND", "MASSACHUSETTS",
+    //                             "MICHIGAN", "NEW MEXICO", "NORTH CAROLINA", "NORTH DAKOTA", "OHIO", "OKLAHOMA", "TENNESSEE",
+    //                             "TEXAS", "WISCONSIN"];
     var statesGeoArray = [];
     var drawnOrderStatesNameArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE",
                                     "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA", "NEW HAMPSHIRE", "VERMONT",
@@ -166,8 +152,9 @@
     var perStateFromcountry =[];
     var countriesArray = [];
     var statesArray = [];
-    var country = 0;
-    var dataset = ["2014_refugees"];
+    var country = 1;
+    var arrayOfFiles = ["all","2016_refugees","2015_refugees","2014_refugees","2013_refugees", "2012_refugees"];
+    var dataset = "2014_refugees";
     ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
 
     ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
@@ -233,12 +220,13 @@ drawmap();
     ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
 
     // getting data from json file, pushing data to arrays
+    var populators = function() {
     d3.json(dataset+".json", function(error, data) {
         if (error) {
           // perStateFromcountry =[];
           return console.error(error);
         }
-        //////////
+        ////////////////////////////////////////////////// COUNTRY AND ARRAY POPULATORS //////////////////////////////////////////////////
         var populateCountriesAndStates = function () {
 
 
@@ -251,12 +239,14 @@ drawmap();
 
         data.Rows.forEach(function (d) {
           statesArray.push(d3.keys(d)[0]);
+          console.log([d3.values(d)[0][country]]);
           perStateFromcountry.push(d3.values(d)[0][country])
         });
       }
       ////////////
       populateCountriesAndStates();
-
+      ////////////////////////////////////////////////// COUNTRY AND ARRAY POPULATORS //////////////////////////////////////////////////
+      ////////////////////////////////////////////////// COUNTRY TOGGLE //////////////////////////////////////////////////
       d3.select(".countries-container").selectAll("li")
       .data(data.Columns)
         .enter()
@@ -276,8 +266,10 @@ drawmap();
           d3.select(".chart-container>svg").remove();
           chartDraw();
         });
+        ////////////////////////////////////////////////// COUNTRY TOGGLE //////////////////////////////////////////////////
     });
-
+}
+populators();
 
     var mousedover = function () {
       d3.select(this).attr("class", "state");
@@ -355,6 +347,30 @@ drawmap();
     }
     chartDraw();
     ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
+    ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
+    d3.select("#years-list").selectAll("li")
+      .data(["All",2016,2015,2014,2013,2012])
+      .enter()
+        .append("li")
+        .text(function (d,i) {
+          return d;
+        })
+        .on("click", function (d,i) {
+          console.log(d,i);
+          console.log(dataset);
+          console.log(arrayOfFiles[i]);
+          dataset=arrayOfFiles[i];
+          perStateFromcountry = [];
+          country = 1;
+          populators();
+          d3.selectAll(".countries-container li").remove();
+          drawmap();
+          d3.select(".chart-container>svg").remove();
+          chartDraw();
+        })
+    ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
+
+
     </script>
   </body>
 </html>
