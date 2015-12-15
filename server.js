@@ -33,6 +33,8 @@ app.get("/data", function (req,res) {
 app.get("/2014data", function (req, res) {
   refugees2014.find().exec(function (err, stuff) {
     console.log(stuff);
+        console.log(err)
     res.send(stuff);
+
   });
 });

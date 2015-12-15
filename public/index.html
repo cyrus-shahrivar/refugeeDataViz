@@ -146,8 +146,15 @@
             CHOOSE ANOTHER YEAR OR ANOTHER GROUP TO DISPLAY.
           </p>
         </div>
+        <div class="top-ten">
+          <h5 style="text-align: center; padding-right: 55px;">TOP TEN GROUPS THIS YEAR</h3>
+          <ol>
+
+          </ol>
+        </div>
       </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
     <script src="d3.v3.min.js" charset="utf-8"></script>
     <script src="topojson.v1.min.js"></script>
     <!-- <script src="app.js">
@@ -182,6 +189,9 @@
         var arrayOfFiles = ["2015_refugees","2014_refugees","2013_refugees", "2012_refugees"];
         var dataset = "2014_refugees";
         var currentCountry = "TOTAL";
+        var topTen = [];
+        var topTenCountries = [];
+        var placeholderArray = [];
         ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
 
         ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
@@ -254,9 +264,10 @@
               return console.error(error);
             }
             ////////////////////////////////////////////////// COUNTRY AND ARRAY POPULATORS //////////////////////////////////////////////////
+
+
             var populateCountriesAndStates = function () {
-
-
+            d3.selectAll(".top-ten ol li").remove();
             //for some reason this is not called again even though this function is triggered
             //var hi = d3.select(".countries-container").selectAll("span").data(data.Columns);
 
@@ -268,10 +279,40 @@
               statesArray.push(d3.keys(d)[0]);
               // console.log([d3.values(d)[0][country]]);
               perStateFromcountry.push(d3.values(d)[0][country])
+              // console.log(typeof d3.values(d)[0][country]);
+              // if(d3.values(d)[0][country] == 0){
+              //   console.log("zeroes present for country");
+              // }else {
+
+              // }
+
             });
+            topTen = d3.values(data.Rows)[data.Rows.length - 1].TOTAL;
+            // console.log("Current Debug",topTen);
+            topTen = (_.sortBy(topTen)).slice(topTen.length-11,topTen.length-1);
+            // console.log("Current Debug",topTen);
+
+            topTenCountries = topTen.map(function (t) {
+              return countriesArray[d3.values(data.Rows)[data.Rows.length - 1].TOTAL.indexOf(t)];
+            })
+            // console.log(topTenCountries.reverse());
+
+            placeholderArray = topTenCountries.reverse();
+
+            d3.select(".top-ten ol").selectAll("li")
+              .data(topTenCountries)
+              .enter()
+                .append("li")
+                .text(function (d) {
+                  console.log(d);
+                  return d;
+                })
+                .style("font-size", "12px");
+
           }
           ////////////
           populateCountriesAndStates();
+
           ////////////////////////////////////////////////// COUNTRY AND ARRAY POPULATORS //////////////////////////////////////////////////
           ////////////////////////////////////////////////// COUNTRY TOGGLE //////////////////////////////////////////////////
           d3.select(".countries-container").selectAll("li")
@@ -356,7 +397,7 @@
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis)
-                .transition().duration(1000)
+                .transition().duration(600)
                   .selectAll("text")
                   .style("text-anchor", "end")
                   .style("font-size", "9px")
@@ -383,7 +424,7 @@
                 .attr("width", x.rangeBand())
                 .attr("y", function(d) { return y(d); })
                 .attr("height", 0)
-                .transition().duration(1500)
+                .transition().duration(600)
                 .attr("height", function(d) { return height - y(d); });
           });
         }
@@ -403,13 +444,15 @@
             .style("font-size", "2em")
             .style("text-align", "center")
             .on("click", function (d,i) {
+              d3.select(".top-ten").style("display: inline");
+              topTen = [];
+              topTenCountries = [];
+              placeholderArray = [];
               d3.selectAll("#years-list li").transition().duration(500).style("font-size", "32px");
               d3.select(this).transition().duration(500).style("font-size", "64px");
               console.log(d);
               // var tempArray = [];
               d3.json(d+"_refugees.json", function (error, data) {
-                console.log(data.Columns.indexOf(currentCountry));
-                console.log(data.Columns.indexOf("NEPAL"));
                 if(data.Columns.indexOf(currentCountry)>-1){
                   d3.select(".flash-message").style("display", "none");
                   country = data.Columns.indexOf(currentCountry);
@@ -418,7 +461,29 @@
                   d3.select(".flash-message").style("display", "inline");
                   country = 0;
                 }
+                  // console.log("Current debug", d3.values(data.Rows)[data.Rows.length - 1]);
+                  topTen = d3.values(data.Rows)[data.Rows.length - 1].TOTAL;
               })
+              // console.log((_.sortBy(topTen)));
+              //truly grabs the top 10
+              // console.log((_.sortBy(topTen)).slice(topTen.length-11,topTen.length-1));
+              topTen = (_.sortBy(topTen)).slice(topTen.length-11,topTen.length-1);
+              topTenCountries = topTen.map(function (t) {
+                return statesArray[perStateFromcountry.indexOf(t)];
+              })
+              // console.log(topTenCountries.reverse());
+
+              placeholderArray = topTenCountries.reverse();
+
+              d3.select(".top-ten ol").selectAll("li")
+                .data(topTenCountries)
+                .enter()
+                  .append("li")
+                  .text(function (d) {
+                    console.log(d);
+                    return d;
+                  })
+                  .style("font-size", "12px");
               countriesArray=[];
               dataset=arrayOfFiles[i];
               perStateFromcountry = [];
