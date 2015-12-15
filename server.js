@@ -29,6 +29,9 @@ app.get("/data", function (req,res) {
   res.send(data);
 });
 
+app.get("/", function (req,res) {
+  res.send("working");
+});
 // //getting same error with
 // app.get("/2014data", function (req, res) {
 //   refugees2014.find().exec(function (err, stuff) {
