@@ -1,8 +1,8 @@
 var express = require('express');
 var morgan = require('morgan');
 var app = express();
-var data = require('./data/2014_refugees.json');
-var mongoose = require('mongoose');
+// var data = require('./data/2014_refugees.json');
+// var mongoose = require('mongoose');
 // var refugees2014 = require('./models/2014.js');
 // var sentiment = require('sentiment');
 
@@ -20,18 +20,29 @@ var mongoose = require('mongoose');
 // console.dir(r1);        //
 
 app.use(morgan('dev'));
-app.listen(3000, function () {
-  console.log("working on port 3000");
-});
-app.use(express.static(__dirname+'/public'));
+// app.listen(3000, function () {
+//   console.log("working on port 3000");
+// });
+// app.use(express.static(__dirname+'/public'));
 
-app.get("/data", function (req,res) {
-  res.send(data);
+
+app.set('port', (process.env.PORT || 5000));
+
+app.use(express.static(__dirname + '/public'));
+
+// views is directory for all template files
+// app.set('views', __dirname + '/views');
+// app.set('view engine', 'ejs');
+
+app.get('/', function(request, response) {
+  response.render('public/index.html');
 });
 
-app.get("/", function (req,res) {
-  res.send("working");
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });
+
+
 // //getting same error with
 // app.get("/2014data", function (req, res) {
 //   refugees2014.find().exec(function (err, stuff) {
