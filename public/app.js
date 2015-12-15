@@ -323,18 +323,17 @@ window.onload = function(){
                       return d;
                     })
                     .style("font-size", "12px");
-                var someFunction = function(){
-                  countriesArray=[];
-                  dataset=arrayOfFiles[i];
-                  perStateFromcountry = [];
-                  // country = 0;
-                  populators();
-                  d3.selectAll(".countries-container li").remove();
-                  drawmap();
-                  d3.select(".chart-container>svg").remove();
-                  chartDraw();
-                }
-                someFunction();
+
+
+                countriesArray=[];
+                dataset=arrayOfFiles[i];
+                perStateFromcountry = [];
+                // country = 0;
+                populators();
+                d3.selectAll(".countries-container li").remove();
+                var timeOutFunction = setTimeout(drawmap,500);
+                d3.select(".chart-container>svg").remove();
+                chartDraw();
               })
 
             d3.select("#years-list > li:nth-child(2)")
