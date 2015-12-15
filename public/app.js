@@ -323,7 +323,7 @@ window.onload = function(){
                       return d;
                     })
                     .style("font-size", "12px");
-                if(1==1){
+                var someFunction = function(){
                   countriesArray=[];
                   dataset=arrayOfFiles[i];
                   perStateFromcountry = [];
@@ -334,6 +334,7 @@ window.onload = function(){
                   d3.select(".chart-container>svg").remove();
                   chartDraw();
                 }
+                someFunction();
               })
 
             d3.select("#years-list > li:nth-child(2)")
