@@ -1,13 +1,6 @@
 window.onload = function(){
-
-          // i want hovering over the countries text to cause the map and the bar chart to update with the country number
-          // how do i do this?  i figure i need an event broadcaster and an event listeners. event listeners need to be on the
-          // bar chart and the map.  event broadcaster needs to be on each country item.
           ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
-          // var dispatch = d3.dispatch("load", "statechange");
-          // var listOfWelcomingStates = ["ARIZONA", "FLORIDA", "GEORGIA", "IDAHO", "ILLINOIS", "IOWA", "MARYLAND", "MASSACHUSETTS",
-          //                             "MICHIGAN", "NEW MEXICO", "NORTH CAROLINA", "NORTH DAKOTA", "OHIO", "OKLAHOMA", "TENNESSEE",
-          //                             "TEXAS", "WISCONSIN"];
+
           var statesGeoArray = [];
           var drawnOrderStatesNameArray = ["WASHINGTON", "MONTANA", "IDAHO", "NORTH DAKOTA", "MINNESOTA", "MAINE",
                                           "MICHIGAN", "WISCONSIN", "OREGON", "SOUTH DAKOTA", "NEW HAMPSHIRE", "VERMONT",
