@@ -3,6 +3,7 @@ var morgan = require('morgan');
 var app = express();
 var test = require('./models/test.js');
 var mongoose = require('mongoose');
+var data2012 = require('./models/data2012.js');
 
 app.use(morgan('dev'));
 
@@ -27,10 +28,12 @@ app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
 
-/*NOTE: when importing with mongoimport, collections must be plural of your schema/model name.
-the get command looks for the plural collection, not the singular.*/
-app.get("/testdb", function (req, res) {
-  test.find().exec(function (err, stuff) {
+/*NOTE: when importing with mongoimport, collections must be plural (if ending in a letter/word) of your schema/model name.
+the get command looks for the plural collection, not the singular. the opposite is true if collection name ends in a number*/
+/*mongoimport --db refugeeApp --collection tests --type csv --headerline --file /Users/cyrusshahrivar/projectFinalGA/refugeeDataViz/public/test.csv*/
+/*mongoimport --db refugeeApp --collection data2012 --type csv --headerline --file /Users/cyrusshahrivar/projectFinalGA/refugeeDataViz/data/2012CSV.csv*/
+app.get("/data2012", function (req, res) {
+  data2012.find().exec(function (err, stuff) {
     if (err) return console.error(err);
     console.log(stuff);
     res.send(stuff);
