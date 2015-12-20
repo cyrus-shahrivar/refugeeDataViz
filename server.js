@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var data2012 = require('./models/data2012.js');
 var data2013 = require('./models/data2013.js');
 var data2014 = require('./models/data2014.js');
+var data2015 = require('./models/data2015.js');
 
 app.use(morgan('dev'));
 
@@ -46,6 +47,22 @@ app.get("/data2012", function (req, res) {
 //GET 2013 data
 app.get("/data2013", function (req, res) {
   data2013.find().exec(function (err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
+//GET 2014 data
+app.get("/data2014", function (req, res) {
+  data2014.find().exec(function (err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
+//GET 2015 data
+app.get("/data2015", function (req, res) {
+  data2015.find().exec(function (err, data) {
     if (err) return console.error(err);
     res.send(data);
   });
