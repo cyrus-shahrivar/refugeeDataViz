@@ -4,6 +4,8 @@ var app = express();
 var test = require('./models/test.js');
 var mongoose = require('mongoose');
 var data2012 = require('./models/data2012.js');
+var data2013 = require('./models/data2013.js');
+var data2014 = require('./models/data2014.js');
 
 app.use(morgan('dev'));
 
@@ -32,10 +34,19 @@ app.listen(app.get('port'), function() {
 the get command looks for the plural collection, not the singular. the opposite is true if collection name ends in a number*/
 /*mongoimport --db refugeeApp --collection tests --type csv --headerline --file /Users/cyrusshahrivar/projectFinalGA/refugeeDataViz/public/test.csv*/
 /*mongoimport --db refugeeApp --collection data2012 --type csv --headerline --file /Users/cyrusshahrivar/projectFinalGA/refugeeDataViz/data/2012CSV.csv*/
+
+//GET 2012 data
 app.get("/data2012", function (req, res) {
-  data2012.find().exec(function (err, stuff) {
+  data2012.find().exec(function (err, data) {
     if (err) return console.error(err);
-    console.log(stuff);
-    res.send(stuff);
+    res.send(data);
+  });
+});
+
+//GET 2013 data
+app.get("/data2013", function (req, res) {
+  data2013.find().exec(function (err, data) {
+    if (err) return console.error(err);
+    res.send(data);
   });
 });
