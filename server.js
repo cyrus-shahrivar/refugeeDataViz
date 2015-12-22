@@ -1,7 +1,6 @@
 var express = require('express');
 var morgan = require('morgan');
 var app = express();
-var test = require('./models/test.js');
 var mongoose = require('mongoose');
 var data2012 = require('./models/data2012.js');
 var data2013 = require('./models/data2013.js');
