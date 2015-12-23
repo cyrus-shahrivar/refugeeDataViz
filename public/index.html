@@ -1,9 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="refugeeApp">
   <head>
     <meta charset="utf-8">
     <title>Refugee Data Visualizer</title>
     <style>
+    /*for test d3 chart in angular using directives*/
+      .chart {
+        background: #eee;
+        padding: 3px;
+      }
+
+      .chart div {
+        width: 0;
+        transition: all 1s ease-out;
+        -moz-transition: all 1s ease-out;
+        -webkit-transition: all 1s ease-out;
+      }
+
+      .chart div {
+        font: 10px sans-serif;
+        background-color: steelblue;
+        text-align: right;
+        padding: 3px;
+        margin: 5px;
+        color: white;
+        box-shadow: 2px 2px 2px #666;
+      }
+    /*END - for test d3 chart in angular using directives*/
       body {
         font-family: Helvetica, sans-serif;
       }
@@ -119,9 +142,9 @@
       }
     </style>
   </head>
-  <body>
+  <body ng-controller="DataVizCtrl as viz">
     <header>
-      <h1 id="title">Refugee Data Visualizer</h1>
+      <h1 id="title">{{viz.title}}</h1>
     </header>
     <div class="overall-container">
       <div class="left-container">
@@ -140,14 +163,14 @@
         </div>
         <div class="flash-message">
           <p>
-            GROUP INFO FOR CHOSEN YEAR DOES NOT EXIST.
+            {{viz.infoNotFound.group}}
           </p>
           <p>
-            CHOOSE ANOTHER YEAR OR ANOTHER GROUP TO DISPLAY.
+            {{viz.infoNotFound.chooseDifferent}}
           </p>
         </div>
         <div class="top-ten">
-          <h5 style="text-align: center; padding-right: 55px;">TOP TEN GROUPS THIS YEAR</h3>
+          <h5 style="text-align: center; padding-right: 55px;">{{viz.topTen}}</h3>
           <ol>
 
           </ol>
@@ -156,18 +179,115 @@
     </div>
     <div class="sources">
       <p>
-        Source: Office of Refugee Resettlement, USDHHS, December 2015
+        {{viz.source}}
       </p>
+    </div>
+    <!-- <div class="test" ng-repeat="place in viz.data2014">
+      {{place.State}} {{place.AFGHANISTAN}}
+    </div> -->
+    <div id="something">
+      <test-box chart-data="10,40,100,80,15,25,60,10"></test-box>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
     <script src="d3.v3.min.js" charset="utf-8"></script>
     <script src="topojson.v1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
+
     <!-- <script src="app.js">
     </script> -->
     <script>
     //AUTHOR: CYRUS SHAHRIVAR
     //DATE: 12/15/2015
     //PROJECT: REFUGEE DATA VISUALIZER
+
+    //angular testing
+    var app = angular.module("refugeeApp", []);
+    app.controller("DataVizCtrl", ["$http","$log", toDoAppCtrl]);
+    var someCountryArray = [];
+
+    function toDoAppCtrl($http, $log) {
+      var self = this;
+
+      //text replacement with Angular references
+      self.title = "Refugee Data Visualizer";
+      self.topTen = "TOP TEN GROUPS THIS YEAR";
+      self.source = "Source: Office of Refugee Resettlement, USDHHS, December 2015";
+      self.infoNotFound = {
+        group: "GROUP INFO FOR CHOSEN YEAR DOES NOT EXIST.",
+        chooseDifferent: "CHOOSE ANOTHER YEAR OR ANOTHER GROUP TO DISPLAY."
+      }
+      self.data2015;
+      get2015();
+      self.data2014;
+      get2014();
+
+      //testing http routes
+      function get2015() {
+        //go to our data service
+        $http
+          .get('/data2015')
+          .then(function (res) {
+            self.data2015 = res.data;
+          })
+          .catch(function (res) {
+            $log.error('failure',res);
+          });
+      }
+
+      //testing http routes
+      function get2014() {
+        //go to our data service
+        $http
+          .get('/data2014')
+          .then(function (res) {
+            self.data2014 = res.data;
+            someCountryArray = res.data;
+          })
+          .catch(function (res) {
+            $log.error('failure',res);
+          });
+      }
+    };
+
+    app.directive("testBox", function ($parse) {
+     //explicitly creating a directive definition variable
+     //this may look verbose but is good for clarification purposes
+     //in real life you'd want to simply return the object {...}
+     var directiveDefinitionObject = {
+         //We restrict its use to an element
+         //as usually  <bars-chart> is semantically
+         //more understandable
+         restrict: 'E',
+         //this is important,
+         //we don't want to overwrite our directive declaration
+         //in the HTML mark-up
+         replace: false,
+         link: function (scope, element, attrs) {
+           //converting all data passed thru into an array
+           var data = attrs.chartData.split(',');
+           //in D3, any selection[0] contains the group
+           //selection[0][0] is the DOM node
+           //but we won't need that this time
+           var chart = d3.select("#something");
+           //to our original directive markup bars-chart
+           //we add a div with out chart stling and bind each
+           //data entry to the chart
+            chart.append("div").attr("class", "chart")
+             .selectAll('div')
+             .data(data).enter().append("div")
+             .transition().ease("elastic")
+             .style("width", function(d) { return d + "%"; })
+             .text(function(d) { return d + "%"; });
+           //a little of magic: setting it's width based
+           //on the data value (d)
+           //and text all with a smooth transition
+         }
+      };
+      return directiveDefinitionObject;
+   });
+
+
 
     window.onload = function(){
         ////////////////////////////////////////////////// VARIABLES //////////////////////////////////////////////////
@@ -249,9 +369,9 @@
                   //colorization scheme using HSL spectrum and scaling country resettlement data to HSL range
                   scaled = d3.scale.linear().domain([0,d3.max(perStateFromcountry.slice(0,51))]).range([0,98]);
                   return "hsl(45,"+scaled(perStateFromcountry.slice(0,51)[drawnOrderStatesNumberArray[i]]) + "%,59%)";
-                })
-                //for now just highlights the states as you mouseover
-                .on("mouseover", mousedover);
+                });
+                // //for now just highlights the states as you mouseover
+                // .on("mouseover", mousedover);
             //more SVG drawing calls
             g.append("path")
                 .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -346,10 +466,10 @@
           }
           //init populators call - 2014 data
           populators();
-          //only highlights states at this time, no additonal functionality
-          var mousedover = function () {
-            d3.select(this).attr("class", "state");
-          }
+          // //only highlights states at this time, no additonal functionality
+          // var mousedover = function () {
+          //   d3.select(this).attr("class", "state");
+          // }
           ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
 
           ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
@@ -397,7 +517,7 @@
                   .attr("class", "x axis")
                   .attr("transform", "translate(0," + height + ")")
                   .call(xAxis)
-                  .transition().duration(600)
+                  .transition().duration(600).ease("elastic")
                     .selectAll("text")
                     .style("text-anchor", "end")
                     .style("font-size", "9px")
