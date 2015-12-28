@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/cyrus-shahrivar/refugeeDataViz#readme",
   "dependencies": {
+    "angular": "^1.4.8",
+    "angular-ui-router": "^0.2.15",
+    "body-parser": "^1.14.2",
     "express": "^4.13.3",
     "mongoose": "^4.3.3",
     "morgan": "^1.6.1",
