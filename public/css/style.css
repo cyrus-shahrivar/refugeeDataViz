@@ -1,0 +1,52 @@
+@media screen and (min-width: 320px) {
+  .mobile {
+    display: none;
+  }
+}
+@media screen and (max-width: 1015px) {
+  .mobile {
+    z-index: 10000;
+    background-color: white;
+    display: block;
+    position: fixed;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    width: 100%;
+    height: 900px;
+  }
+  #title {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1180px){
+  .news-stats-container {
+    position: fixed;
+    top: 0;
+    left: 450px;
+    font-size: 16px;
+  }
+
+  #years-list li {
+    display: inline;
+    margin: 10px;
+  }
+
+  .flash-message {
+    position: fixed;
+    top: 200px;
+    left: 400px;
+    font-size: 20px;
+    font-weight: bold;
+    width: 400px;
+    background-color: black;
+    color: white;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 5px 5px 5px 0;
+  }
+
+  .top-ten {
+    display: none;
+  }
+}
