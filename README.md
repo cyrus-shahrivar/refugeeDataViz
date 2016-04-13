@@ -6,6 +6,7 @@ https://refugee-data-viz.herokuapp.com/
 
 ### Author: Cyrus Shahrivar
 ### Date: 12/15/2015
+### Update: Coming Soon, See Potential Layout Update @ Bottom of this README
 
 ### Technologies Used and Installation Instructions
 - D3.js: data visualization library
@@ -44,6 +45,9 @@ NOTE: Puerto Rico and other US territories not included in this data visualizati
   - https://github.com/cyrus-shahrivar/refugeeDataViz/blob/master/planning/final-project-proposal.md
 
 ### Unsolved Problems
-- Adding more data from 2015
-- Making friendly to many screen sizes
-- Putting data in database instead of JSON objects
+- Adding more data from 2015 - WORK IN PROGRESS
+- Making friendly to many screen sizes - COMPLETE: added mobile warning to ask user to view on desktop
+- Putting data in database instead of JSON objects - WORK IN PROGRESS
+
+### Potential Layout Update
+<img src="./REVISED CONCEPT FOR REFUGEE DATA VISUALIZER.png"/ width="700">
