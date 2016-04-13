@@ -5,11 +5,11 @@ var mongoose = require('mongoose');
 
 app.use(morgan('dev'));
 
-mongoose.connect('mongodb://localhost/refugeeApp', function (err) {
+mongoose.connect('mongodb://localhost/refugeeDataVizApp', function (err) {
   if(err){
     console.log(err);
   } else {
-    console.log('connection successful - server');
+    console.log('connection successful to databasere');
   }
 });
 
@@ -17,6 +17,8 @@ mongoose.connect('mongodb://localhost/refugeeApp', function (err) {
 the get command looks for the plural collection, not the singular. the opposite is true if collection name ends in a number*/
 /*mongoimport --db refugeeApp --collection tests --type csv --headerline --file /Users/cyrusshahrivar/projectFinalGA/refugeeDataViz/public/test.csv*/
 /*mongoimport --db refugeeApp --collection data2012 --type csv --headerline --file /Users/cyrusshahrivar/projectFinalGA/refugeeDataViz/data/2012CSV.csv*/
+
+// NOTE: when using json files there are some differences noted here in the command structure: https://docs.mongodb.org/manual/reference/program/mongoimport/
 
 //GET 2012 data
 // app.get("/data2012", function (req, res) {
