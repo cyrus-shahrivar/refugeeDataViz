@@ -27,6 +27,13 @@
     font-size: 16px;
   }
 
+  #years-list {
+    position: fixed;
+    top: 45px;
+    font-size: 0.75em;
+    left: 497px;
+  }
+
   #years-list li {
     display: inline;
     margin: 10px;
