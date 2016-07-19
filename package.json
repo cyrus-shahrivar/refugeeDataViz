@@ -19,7 +19,9 @@
   "homepage": "https://github.com/cyrus-shahrivar/refugeeDataViz#readme",
   "dependencies": {
     "express": "^4.13.3",
+    "fs": "0.0.2",
     "morgan": "^1.6.1",
+    "path": "^0.12.7",
     "sentiment": "^1.0.2"
   }
 }

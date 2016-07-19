@@ -157,9 +157,11 @@ window.onload = function(){
             .text(function (d, i) {
               return countriesArray[i].toString().split(",").join(", ");
             })
-            .style("font-size", "10px")
-            .style("color", "grey")
-            .style("list-style", "none")
+            .style({"font-size": "10px",
+              "color": "grey",
+              "list-style": "none",
+              "cursor": "pointer"
+            })
             .attr("class","country");
           //assigns on-click functionality to countries list
           d3.select(".countries-container").selectAll("li")
@@ -167,8 +169,16 @@ window.onload = function(){
             .on("click", function (d,i) {
               //adds styling and resets arrays and then repopulates arrays as clicked
               d3.select(".flash-message").style("display", "none");
-              d3.selectAll(".countries-container li").style("text-decoration", "none");
-              d3.select(this).style("text-decoration", "underline");
+              d3.selectAll(".countries-container li").style({
+                "text-decoration": "none",
+                "font-weight": "normal",
+                "color": "grey"
+              });
+              d3.select(this).style({
+                "text-decoration": "underline",
+                "font-weight": "bold",
+                "color": "black"
+              });
               currentCountry = countriesArray[i];
               countriesArray=[];
               perStateFromcountry = [];
@@ -236,7 +246,7 @@ window.onload = function(){
               .attr("class", "x axis")
               .attr("transform", "translate(0," + height + ")")
               .call(xAxis)
-              .transition().duration(600)
+              .transition().duration(400)
                 .selectAll("text")
                 .style("text-anchor", "end")
                 .style("font-size", "9px")
