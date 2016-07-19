@@ -98,13 +98,6 @@ window.onload = function(){
     ////////////////////////////////////////////////// DRAWING THE MAP //////////////////////////////////////////////////
 
     ////////////////////////////////////////////////// COUNTRIES-LIST AND POPULATING ARRAYS //////////////////////////////////////////////////
-    // WORKKING ON DEALING WITH XML->JSON ORGANIZED DATA FOR FASTER INCORPORATION OF OTHER DATA FROM OTHER YEARS BEYOND CURRENT RANGE
-    // d3.json('2015_test.json', function (error,data) {
-    //   console.log(data.Report.matrix4);
-    //   console.log(data.Report.matrix5.Category4_Collection.Category4[0].Category5_Collection.Category5[0].Textbox65.Category4._Category4);
-    // });
-
-
     // getting data from refugee json files, pushing data to arrays
     var populators = function() {
       //gets json file based on current dataset variable
