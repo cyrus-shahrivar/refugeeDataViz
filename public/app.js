@@ -1,5 +1,5 @@
 //AUTHOR: CYRUS SHAHRIVAR
-//DATE: 12/15/2015
+//INITIAL DATE: 12/15/2015
 //PROJECT: REFUGEE DATA VISUALIZER
 
 window.onload = function(){
@@ -119,14 +119,19 @@ window.onload = function(){
               perStateFromcountry.push(d3.values(d)[0][country]);
             });
 
-            topTen = d3.values(data.Rows)[data.Rows.length - 1].TOTAL;
-            topTen = (_.sortBy(topTen)).slice(topTen.length-11,topTen.length-1);
-
+            // unique zips up columns and totals; ran into duplicates issue with other
+            var zipped = _.zip(d3.values(data.Rows)[data.Rows.length - 1].TOTAL, data.Columns);
+            var sortedZipped = _.sortBy(zipped, function (zip) {
+              return zip[0];
+            });
+            topTen = sortedZipped.reverse().slice(1,11);
             topTenCountries = topTen.map(function (t) {
-              return countriesArray[d3.values(data.Rows)[data.Rows.length - 1].TOTAL.indexOf(t)];
+              return t[1];
             })
+
             //manipulates topTen countries to be in reverse order after sorting, then assigns to HTML DOM elements
-            placeholderArray = topTenCountries.reverse();
+            placeholderArray = topTenCountries;
+
             d3.select(".top-ten ol").selectAll("li")
               .data(topTenCountries)
               .enter()
@@ -303,14 +308,18 @@ window.onload = function(){
                 d3.select(".flash-message").style("display", "inline");
                 country = 0;
               }
-                topTen = d3.values(data.Rows)[data.Rows.length - 1].TOTAL;
-            })
-            topTen = (_.sortBy(topTen)).slice(topTen.length-11,topTen.length-1);
-            topTenCountries = topTen.map(function (t) {
-              return statesArray[perStateFromcountry.indexOf(t)];
+                // unique zips up columns and totals; ran into duplicates issue with other
+                var zipped = _.zip(d3.values(data.Rows)[data.Rows.length - 1].TOTAL, data.Columns);
+                var sortedZipped = _.sortBy(zipped, function (zip) {
+                  return zip[0];
+                });
+                topTen = sortedZipped.reverse().slice(1,11);
+                topTenCountries = topTen.map(function (t) {
+                  return t[1];
+                });
+                placeholderArray = topTenCountries.reverse();
             })
 
-            placeholderArray = topTenCountries.reverse();
             //displays top ten list of countries resettled in US for givin year
             d3.select(".top-ten ol").selectAll("li")
               .data(topTenCountries)
