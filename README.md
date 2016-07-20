@@ -2,7 +2,7 @@
 
 # Refugee Data Visualizer
 Creator: Cyrus Shahrivar<br/>
-Version 1.1 (July 2016)<br/>
+Version 1.2 (July 2016)<br/>
 https://refugee-data-viz.herokuapp.com/
 
 #### Table of Contents
