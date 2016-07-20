@@ -19,7 +19,7 @@ window.onload = function(){
     var drawnOrderStatesNumberArray = [47,26,12,34,23,19,22,49,37,41,29,45,32,50,15,27,21,13,38,6,39,4,44,28,35,14,30,5,48,25,
                                       16,7,20,46,17,8,2,36,31,42,33,43,3,40,0,10,24,18,9,11,1];
 
-    //numbers of individuals per state from country for 2014_refugees
+    //numbers of individuals per state from country for 2015_refugees
     var perStateFromcountry =[];
     //used for displaying list of countries
     var countriesArray = [];
@@ -29,8 +29,8 @@ window.onload = function(){
     var country = 0;
     //files holding yearly data
     var arrayOfFiles = ["2015_refugees","2014_refugees","2013_refugees", "2012_refugees"];
-    //holds the current dataset to parse, init 2014
-    var dataset = "2014_refugees";
+    //holds the current dataset to parse, init 2015
+    var dataset = "2015_refugees";
     //used to hold current country chosen while countries assignment changes, allows for year-to-year comparisons
     var currentCountry = "TOTAL";
     //these three are used to generate the top ten list of countries/groups that were resettled in the US
@@ -137,7 +137,7 @@ window.onload = function(){
                 .style("font-size", "12px");
 
           }
-          //init populator call - 2014 data
+          //init populator call - 2015 data
           populateCountriesAndStates();
 
           ////////////////////////////////////////////////// COUNTRY AND ARRAY POPULATORS //////////////////////////////////////////////////
@@ -182,11 +182,11 @@ window.onload = function(){
               chartDraw();
             });
             //init select styling - TOTAL
-            d3.select("body > div > div.left-container > div > li:nth-child("+(country+1)+")").style("text-decoration", "underline");
+            d3.select("body > div > div.left-container > div > li:nth-child("+(country+1)+")").style({"text-decoration": "underline", "font-weight": "bold","color": "black"});
             ////////////////////////////////////////////////// COUNTRY TOGGLE //////////////////////////////////////////////////
         });
       }
-      //init populators call - 2014 data
+      //init populators call - 2015 data
       populators();
       //only highlights states at this time, no additonal functionality
       var mousedover = function () {
@@ -270,7 +270,7 @@ window.onload = function(){
               .attr("height", function(d) { return height - y(d); });
         });
       }
-      //init chart draw with 2014 TOTAL data
+      //init chart draw with 2015 TOTAL data
       chartDraw();
       ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
       ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
@@ -330,8 +330,8 @@ window.onload = function(){
             d3.select(".chart-container>svg").remove();
             chartDraw();
           })
-        //defaults 2014 to be large font on init load
-        d3.select("#years-list > li:nth-child(2)")
+        //defaults 2015 to be large font on init load
+        d3.select("#years-list > li:nth-child(1)")
           .style("font-size", "4em");
       ////////////////////////////////////////////////// YEAR TOGGLE //////////////////////////////////////////////////
 };
