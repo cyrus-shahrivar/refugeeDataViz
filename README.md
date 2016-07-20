@@ -79,12 +79,16 @@ NOTE: Puerto Rico and other US territories not included in this data visualizati
 - Add a help menu
 - Have a landing page or modal to introduce people to the application and guide use and to help when needed
 - Provide a mobile friendly implementation (may not be map based)
+- Add url stored state to program to allow for easy social sharing
+- Add social sharing API
 - Provide way to toggle different types of visualizations (bar, line, map, tree, bubbles, other)
-- Adding more data from 2015 forward, and from before 2012
-
+- Adding more data after 2015 FY (Oct. 1st to Sept. 30th), and from before 2012
+  - Expect 2016 FY preliminary data available in Oct./Nov. 2016, verified set in Apr. 2017
 
 <a id="versions"></a>
 #### Version History
+- Version 1.2: July 2016
+  - Added complete set of 2015 data; minor style changes
 - Version 1.1: July 2016
   - API created to provide access to JSON data publicly; README documentation updated; minor style changes
 - Version 1: December 2015
