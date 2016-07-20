@@ -73,6 +73,8 @@ NOTE: Puerto Rico and other US territories not included in this data visualizati
 <a id="problems"></a>
 #### Unsolved Problems
 - Rendering occurring before data loaded on initial page load
+- Two Eritrea occurrences in 2015 Top Ten
+- Graph flickering
 
 <a id="improvements"></a>
 #### Thoughts on Improvements to the Application
