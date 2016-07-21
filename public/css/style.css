@@ -2,6 +2,18 @@ body {
   font-family: Helvetica, sans-serif;
 }
 
+fb-share-button, .fb_iframe_widget {
+  position: fixed;
+  left: 30px;
+  bottom: 5px;
+}
+
+twitter-share, .twitter {
+  position: fixed;
+  left: 94px;
+  bottom: 1px;
+}
+
 .mobile p, .mobile div {
   width: 270px;
   color: cornflowerblue;
@@ -17,7 +29,7 @@ body {
 }
 
 .axis {
-  font: 10px sans-serif;
+  font: 9px sans-serif;
 }
 
 .axis path,
@@ -96,6 +108,7 @@ pointer-events: none;
 .sources {
   position: fixed;
   right: 10px;
+  bottom: 0;
   font-size: 8px;
 }
 
@@ -184,7 +197,6 @@ pointer-events: none;
   .sources {
     position: fixed;
     right: 5px;
-    bottom: 0;
   }
 }
 

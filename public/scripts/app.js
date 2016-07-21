@@ -73,7 +73,7 @@ window.onload = function() {
                             .style("font-size", "12px");
 
                     }
-                    //init populator call - 2015 data
+                //init populator call - 2015 data
                 populateCountriesAndStates();
 
                 ////////////////////////////////////////////////// COUNTRY AND ARRAY POPULATORS //////////////////////////////////////////////////
@@ -175,7 +175,7 @@ window.onload = function() {
                         scaled = d3.scale.linear().domain([0, d3.max(perStateFromcountry.slice(0, 51))]).range([0, 98]);
                         return "hsl(45," + scaled(perStateFromcountry.slice(0, 51)[drawnOrderStatesNumberArray[i]]) + "%,59%)";
                     })
-                    //more SVG drawing calls
+                //more SVG drawing calls
                 g.append("path")
                     .datum(topojson.mesh(us, us.objects.states, function(a, b) {
                         return a !== b;
@@ -193,7 +193,7 @@ window.onload = function() {
       //chart drawing function
             //sets the overall dimensions of the bar chart
             var margin = {
-                    top: 20,
+                    top: 24,
                     right: 20,
                     bottom: 80,
                     left: 40
@@ -253,7 +253,7 @@ window.onload = function() {
                     .call(yAxis)
                     .append("text")
                     .attr("transform", "rotate(-90)")
-                    .attr("y", 6)
+                    .attr("y", -40)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
                     .style("font-size", "1.0em")
@@ -275,9 +275,31 @@ window.onload = function() {
                     .attr("height", function(d) {
                         return height - y(d);
                     });
+
+                svg.selectAll(".bar text")
+                    .data(perStateFromcountry.slice(0,51))
+                    .enter().append("text")
+                    .attr("x", function(d, i) {
+                        return x(statesArray[i]);
+                    })
+                    .attr("y", function(d) {
+                        return y(d);
+                    })
+                    .attr("dx", function () {
+                      return (x.rangeBand()) / 2;
+                    })
+                    .attr("dy", "-0.2em")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "6.5px")
+                    .text(function (d) {
+                      console.log(d);
+                      if(d !== 0){
+                          return d;
+                      }
+                    })
             });
-            ////////////////////////////////////////////////// BAR-CHART //////////////////////////////////////////////////
         }
+    ////////////////////////////////////////////////// BAR-CHART ////////////////////////////////////////////////////
     //init chart draw with 2015 TOTAL data
     chartDraw();
 
@@ -345,7 +367,8 @@ function produceTopTenCountries(data) {
     });
     topTen = sortedZipped.reverse().slice(1, 11);
     topTenCountries = topTen.map(function(t) {
-        return t[1];
+      console.log(t[0]);
+        return t[1] + " (" + t[0] + ")";
     });
     return topTenCountries;
 }
