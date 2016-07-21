@@ -1,7 +1,121 @@
+body {
+  font-family: Helvetica, sans-serif;
+}
+
+.mobile p, .mobile div {
+  width: 270px;
+  color: cornflowerblue;
+}
+
+/*SVG Styling Start*/
+.bar {
+  fill: rgba(0,0,0,0.5);
+}
+
+.bar:hover {
+  fill: rgb(253,200,47);
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.background {
+fill: none;
+pointer-events: all;
+}
+
+#states {
+fill: #333444;
+}
+
+#states .active {
+fill: rgb(253,200,47);
+}
+
+#state-borders {
+fill: none;
+stroke: #fff;
+stroke-width: 1.5px;
+stroke-linejoin: round;
+stroke-linecap: round;
+pointer-events: none;
+}
+/*SVG Styling End*/
+
+#title {
+  margin-bottom: 10px;
+  background-color: white;
+  color: rgb(253,200,47);
+  font-family: 'Inconsolata', sans-serif;
+}
+
+.left-container {
+  display: inline-block;
+}
+
+.middle-container {
+  display: inline-block;
+  position: absolute;
+  height: 560px;
+}
+.map-container {
+  position: relative;
+}
+.chart-container {
+  position: relative;
+  top: -39px;
+}
+.countries-container {
+  -webkit-column-count: 2; /* Chrome, Safari, Opera */
+  -moz-column-count: 2; /* Firefox */
+  column-count: 2;
+  height: 560px;
+  overflow: scroll;
+  width: 200px;
+  display: inline-block;
+}
+
+.right-container {
+  width: 200px;
+  display: inline;
+  float: right;
+}
+
 .sources {
   position: fixed;
   right: 10px;
   font-size: 8px;
+}
+
+.country:hover{
+  text-decoration: underline;
+  cursor: default;
+}
+
+.flash-message {
+  display: none;
+}
+
+#years-list{
+  padding-left: 0;
+  padding-right: 55px;
+}
+
+.years:hover{
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 @media screen and (min-width: 320px) {
@@ -9,7 +123,7 @@
     display: none;
   }
 }
-@media screen and (max-width: 1015px) {
+@media screen and (max-width: 1024px) {
   .mobile {
     z-index: 10000;
     background-color: white;
@@ -21,6 +135,9 @@
     height: 900px;
   }
   #title {
+    display: none;
+  }
+  #octocat {
     display: none;
   }
 }
@@ -35,9 +152,10 @@
 
   #years-list {
     position: fixed;
-    top: 45px;
+    top: 0;
+    right: 5px;
     font-size: 0.75em;
-    left: 497px;
+    padding-right: 1px;
   }
 
   #years-list li {
@@ -65,10 +183,15 @@
 
   .sources {
     position: fixed;
-    left: 5px;
+    right: 5px;
+    bottom: 0;
   }
 }
 
-.mobile p, .mobile div {
-  width: 300px;
+#octocat {
+  width: 20px;
+  height: 20px;
+  position: fixed;
+  left: 5px;
+  bottom: 5px;
 }
