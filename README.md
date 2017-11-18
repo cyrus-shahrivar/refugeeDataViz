@@ -1,4 +1,4 @@
-<img src="./screen_shot.png"/ width="700">
+<img src="./screen_shot.png" width="700">
 
 # Refugee Data Visualizer
 Creator: Cyrus Shahrivar<br/>
